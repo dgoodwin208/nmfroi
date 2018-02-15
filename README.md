@@ -1,6 +1,6 @@
 # NMF-based segmentation for Voltage Imaging Dataset
 
-As seen in Piatkevich et al 2017 (publication link and sample data coming soon). This a computational tool for an experiment using a fluorescent voltage sensor. The input is a time-series image stack with negligible motion artifacts.
+As seen in Piatkevich et al 2017 (publication link coming soon). This a computational tool for an experiment using a fluorescent voltage sensor. The input is a time-series image stack with negligible motion artifacts.
 
 ![Image](suppfig19.png)
 
