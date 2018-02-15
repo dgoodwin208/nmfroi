@@ -7,6 +7,11 @@ Fs = 300; %Hz
 
 data = load3DTif_uint16(input_file);
 output_filename = 'output/sparsenmfnnls_pieces.mat';
+
+%For robustness, we separate the data into overlapping sections and
+%calculate the signal mask (1=pixel is signal, 0 is signal is background),
+%then combine the different masks. The number of overlapping sections is
+%num_pieces-1
 num_pieces = 5;
 
 
@@ -86,8 +91,8 @@ end
 save(output_filename,'BigA','BigY','-v7.3');
 
 %% Somehow take user input for a point that we know is part of the target ROI
-keypoint_x = 189;
-keypoint_y = 191;
+keypoint_x = 174;
+keypoint_y = 74;
 
 
 signal_masks = [];
@@ -114,7 +119,7 @@ for n=1:num_pieces-1
     if non_signal_component_idx == signal_component_idx
         non_signal_component_idx =2;
     end
-    disp([num2str(signal_component_idx), ' ', num2str(non_signal_component_idx)])
+
     
     
     %Create the binary mask
@@ -125,21 +130,19 @@ figure;
 for n=1:num_pieces-1
     subplot(num_pieces-1,1,n)
     imagesc(squeeze(signal_masks(n,:,:)))
+    axis off;
+    title(sprintf('Mask applied to subset of data %i',n));
 end
 
 figure;
 summed = squeeze(sum(signal_masks,1));
-% summed(summed<2) = 0;
 imagesc(summed)
+title(sprintf('Summation of the binary mask from the %i time subsections',num_pieces-1));
 
-
+%The mask we use is all non-zero pixel values, which means that at any
+%subsection of time, the pixel was classified as signal.
 final_mask = summed>0;
 
-% figure;
-% subplot(2,1,1)
-% imagesc(final_mask)
-% subplot(2,1,2)
-% imagesc(std(data,[],3))
 %% Make a mask of this data
 
 output = data;
@@ -151,8 +154,8 @@ for z=1:size(output,3)
     output(:,:,z) = frame;
 end
 
-%Save the mask file
-% save3DTif(output,'Slice4-013-mask');
+%If you want, you can save the mask file or the masked data here.
+% save3DTif_uint16(output,'Slice4-013-mask');
 
 %% Use the mask data to create a new tif stack
 
@@ -196,7 +199,7 @@ t = t.*window';
 T = abs(fft(t));
 num_bins = length(T);
 freq_signal = T(1:num_bins/2);
-plot(freq_signal)
+plot(log(freq_signal))
 title('Frequency domain')
 xlabel('frequency index: nyquist at 2.2Hz');
 ylabel('Log magnitude')
@@ -217,7 +220,7 @@ window = hanning(length(t));
 t = t.*window';
 T = abs(fft(t));
 freq_signal = T(1:num_bins/2);
-plot(freq_signal);
+plot(log(freq_signal));
 title('Frequency domain')
 xlabel('frequency index: nyquist at 2.2Hz');
 ylabel('Log magnitude')
@@ -238,7 +241,7 @@ window = hanning(length(t));
 t = t.*window';
 T = abs(fft(t));
 freq_signal = T(1:num_bins/2);
-plot(freq_signal);
+plot(log(freq_signal));
 title('Frequency domain')
 xlabel('frequency index: nyquist at 2.2Hz');
 ylabel('Log magnitude')
@@ -305,10 +308,12 @@ for i = 1:length(CC.PixelIdxList)
 end
 
 disp(['Found ' num2str(size(component_centroids,1)) ' legitimate components']);
-figure;
-cc_sizes = [ [1,5,10], 20:10:400];
-histogram(sizes,cc_sizes);
-title('Distribution of sizes of connected components, in pixels');
+
+%If you want to explore statistics of the size of the ROIs
+% figure;
+% cc_sizes = [ [1,5,10], 20:10:400];
+% histogram(sizes,cc_sizes);
+% title('Distribution of sizes of connected components, in pixels');
 
 figure;
 subplot(3,1,1)
