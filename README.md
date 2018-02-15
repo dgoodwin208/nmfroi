@@ -12,7 +12,7 @@ In `extractROISandTraces.m`,the raw data is loaded and segmented into regions of
 [NMFTool](https://sites.google.com/site/nmftool/)
 
 # Acknowledgments
-The concept of using rank-2 NMF on the power spectral density as a segmentation method was originally by Dan Goodwin and Eftychios Pnevmatakis. The loading and saving tif routines are a modification the [CaImAn] (https://github.com/flatironinstitute/CaImAn-MATLAB) repository I/O functions. 
+The concept of using rank-2 NMF on the power spectral density as a segmentation method was originally by Dan Goodwin and Eftychios Pnevmatakis. The loading and saving tif routines are a modification the [CaImAn](https://github.com/flatironinstitute/CaImAn-MATLAB) repository I/O functions. 
 
 # For support
 We want these tools to be used by the community and so it is important to us to be responsive in helping other people use these computational tools. Furthermore, this code is currently "research grade," and as such, feedback and bug reports in this repository's Issues help us improve these tools! 
